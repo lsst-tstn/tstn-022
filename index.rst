@@ -12,6 +12,8 @@
    After analysis of the data we discover that the issue was due to the pointing component having the wrong direction for the rotator.
    This tech-note documents our findings.
 
+.. _section-introduction:
+
 Introduction
 ============
 
@@ -34,10 +36,12 @@ We confirmed that the arcs formed by stars in the field are consistent with the 
 Following is a description of the analysis performed in the data to demonstrate that the AT Nasmyth rotator is being commanded by the pointing component in the wrong direction.
 The pointing component will be updated to fix the issue.
 
+.. _section-data-analysis:
+
 Data Analysis
 =============
 
-The analysis focused on two different datasets; a group of exposures of well known easy to match targets and a long (>300s) exposure.
+The analysis focused on two different datasets; a group of exposures of well known easy-to-match targets and a long (>300s) exposure.
 :numref:`table-dataset` contains a summary of the data used for this analysis.
 
 .. _table-dataset:
@@ -53,14 +57,77 @@ The analysis focused on two different datasets; a group of exposures of well kno
     +------------+--------+------------+-----------+-----------+----------+----------+-----------+
     | 2020-03-12 |   208  |      212.9 |      84.5 |  2.0      | HD 68450 |  8:11:01 | -37:17:32 |
     +------------+--------+------------+-----------+-----------+----------+----------+-----------+
+    | 2020-03-13 |   130  |      -94.6 |    -198.6 |  5.0      | HD 98993 | 11:23:12 | -36:09:53 |
+    +------------+--------+------------+-----------+-----------+----------+----------+-----------+
     | 2020-03-13 |   131  |      -94.6 |    -198.6 |  390.0    | HD 98993 | 11:23:12 | -36:09:53 |
     +------------+--------+------------+-----------+-----------+----------+----------+-----------+
+    | 2020-03-13 |   132  |      -94.6 |    -198.6 |   30.0    | HD 98993 | 11:23:12 | -36:09:53 |
+    +------------+--------+------------+-----------+-----------+----------+----------+-----------+
+
+.. _section-HD98993:
+
+HD 98993
+--------
+
+This is probably the best dataset to show that the rotator is moving in the wrong direction.
+We have a short discovery exposure (``visitId = 2020031300130``), followed by a long 390s exposure (``visitId = 2020031300130``) and a subsequent 30s exposure (``visitId = 2020031300132``).
+The :ref:`long exposure <figure-2020031300131>` clearly shows arc-like star trails, which is consistent with rotator drift.
+The size of the arcs can be easily estimated since we know the plate scale of the images and, be compared to the expected arc-size in case the rotator is rotating in the wrong direction.
+Visits ``2020031300130`` and ``2020031300132``, although do not show any sign of image streak (due to the shorter exposure times) can be used to validate that the streaks in ``2020031300131`` are continuous and not jitter during the exposure.
+
+In :numref:`figure-2020031300131` we show visit ``2020031300131`` with rulers showing the arc length and its distance to the apparent center of rotation.
+The measurement values are :math:`0.003\deg` and :math:`0.062\deg`, which translates to an angle of :math:`2.77\deg`.
+If we compute the variation in the rotator position from the start to finish of that exposure, we obtain a variation of :math:`2.14\deg`, which is consistent with what we get from the arc-length above.
+
+.. figure:: /_static/HD98993_131.png
+   :name: figure-2020031300131
+   :target: ../_images/HD98993_131.png
+   :alt: HD 98993 390s exposure
+
+   A long (390s) exposure of HD 98993 that clearly shows the rotator direction issue.
+
+:numref:`figure-stackall` shows an inset of a stack of the three images.
+The images are combined in pixel space to highlight the effect and arbitrarily scaled to highlight the effect.
+The reference star from the first and last images are marked for reference along with the arc from the long exposure.
+It is quite clear that the images rotates with the expected rate as if the rotator was moving in the wrong direction.
+
+.. figure:: /_static/HD98993_stack.png
+   :name: figure-stackall
+   :target: ../_images/HD98993_stack.png
+   :alt: HD 98993 stack
+
+   Stacked images of HD 98993 showing the effect of rotation over the three test images, a short 5s exposure followed by long a 390s and a 30s exposure.
+   The images are arbitrarily scaled to highlight the effect.
 
 
+.. _section-HD68450:
 
+HD 68450
+--------
 
+After performing the analysis on :ref:`HD 98993 <section-HD98993>` and we are confident that the rotator is moving in the wrong direction, we should be able to verify it using observations of different targets at different times with different requested sky rotation angles.
 
+The analysis shown here was repeated in a number of different targets but we choose ``HD 68450`` because it is easy to identify the field rotation.
+In :numref:`figure-HD68450` we show a finding chart with the field orientation (direction of North and East axis) and the images taken with the Auxiliary Telescope on the left and right-hand side, respectively.
+Visits ``2020031200197`` and ``2020031200208`` are shown at the top and bottom, respectively, with two different orientations.
+Images in the middle (labeled "original orientation") are shown with the sky angle taken from the commanded position.
+The right-most images (labeled "computed orientation") are shown with the sky angle computed from the data available in the EFD.
+The calculation is done by taking the time when the exposure starts and ends and querying for the telescope azimuth, elevation and nasmyth angle.
+Then, assuming the rotator has the reversed direction, we compute the expected sky angle.
+It is clear, from visual inspection, that the computed sky angle should be close to the correct sky angle orientation.
+We then, assuming this angle as a starting point, calibrated the WCS from the images, and matched the resulting WCS with GAIA catalog.
+In all cases we manage to confirm that the nasmyth rotator is rotating in the reverse direction.
 
+.. figure:: /_static/HD68450.png
+   :name: figure-HD68450
+   :target: ../_images/HD68450.png
+   :alt: HD 68450
+
+   Comparison of HD 68450 observations taken with the Auxiliary Telescope and the field finding chart.
+   The left hand panel shows the finding chart of the field with roughly the same FoV of the instrument.
+   In the right hand panels we show the images of HD 68450 taken with the Auxiliary Telescope, with two different orientations.
+   The original orientation (as sent to the pointing component) is shown in the middle panel and the computed orientation, considering that the rotator has the wrong orientation, is shown in the right.
+   Values for the angles are shown in :numref:`table-dataset`.
 
 
 
