@@ -64,6 +64,18 @@ The analysis focused on two different datasets; a group of exposures of well kno
     | 2020-03-13 |   132  |      -94.6 |    -198.6 |   30.0    | HD 98993 | 11:23:12 | -36:09:53 |
     +------------+--------+------------+-----------+-----------+----------+----------+-----------+
 
+The equation to compute the sky position angle is as follows:
+
+.. math:: \mathrm{rot\_sky} = \mathrm{PA} - \mathrm{El} - \mathrm{rot\_angle}.
+   :label: math-rotsky-1
+
+If the rotator has the inverse orientation, the corrected angle should be computed as:
+
+.. math:: \mathrm{rot\_sky} = \mathrm{PA} - \mathrm{El} + \mathrm{rot\_angle}
+   :label: math-rotsky-2
+
+where ``rot_sky`` is the angle eastward of north between camera y-axis and north, ``PA`` is the Parallactic Angle, ``El`` is the target elevation in the local coordinate system and ``rot_angle`` is the Rotator/Nasmyth angle.
+
 .. _section-HD98993:
 
 HD 98993
